@@ -435,9 +435,20 @@ function matchesFilters(art) {
   return matchesCategory && haystack.includes(term);
 }
 
+function matchesFiltersArtist(artist) {
+  const term = searchInput.value.trim().toLowerCase();
+  const matchesCategory = activeCategory === 'All' || artist.movement === activeCategory;
+  const haystack = `${artist.name} ${artist.movement}`.toLowerCase();
+  return matchesCategory && haystack.includes(term);
+}
+
 function currentFilteredArtworks() {
   return artworks.filter(matchesFilters);
 }
+function currentFilteredArtists() {
+  return artist.filter(matchesFiltersArtist);
+}
+
 
 function renderFilters() {
   filterButtons.innerHTML = '';
@@ -491,8 +502,9 @@ function renderGallery() {
 }
 
 function renderArtists() {
+    const filtered = currentFilteredArtists();
   artistProfilesContainer.innerHTML = '';
-  artistProfiles.forEach((artist) => {
+  artistProfiles.forEach((filtered) => {
     const card = document.createElement('article');
     card.className = 'artist-card';
     card.innerHTML = `
