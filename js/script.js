@@ -149,7 +149,7 @@ const artworks = [
         artist: "Claude Monet",
         year: 1916,
         category: "Impressionism",
-        image: "assets/images/Water_lilies.jpg",
+        image: "assets/images/Water_Lilies.jpg",
         description: "A tranquil study of light and water."
     },
     {
@@ -239,11 +239,10 @@ const artworks = [
         artist: "Andy Warhol",
         year: 1962,
         category: "Pop Art",
-        image: "assets/images/Campbell's_Soup_Cans.jpg",
+        image: "assets/images/Campbells_Soup_Cans.jpg",
         description: "Iconic pop art consumer imagery."
     }
 ];
-
 
 const artistProfiles = [
     {
@@ -425,56 +424,46 @@ let currentIndex = 0;
 let slideshowInterval = null;
 
 function uniqueCategories() {
-  return ['All', ...new Set(artworks.map((art) => art.category))];
+    return ['All', ...new Set(artworks.map((art) => art.category))];
 }
 
 function matchesFilters(art) {
-  const term = searchInput.value.trim().toLowerCase();
-  const matchesCategory = activeCategory === 'All' || art.category === activeCategory;
-  const haystack = `${art.title} ${art.artist} ${art.year} ${art.category}`.toLowerCase();
-  return matchesCategory && haystack.includes(term);
-}
-
-function matchesFiltersArtist(artist) {
-  const term = searchInput.value.trim().toLowerCase();
-  const matchesCategory = activeCategory === 'All' || artist.movement === activeCategory;
-  const haystack = `${artist.name} ${artist.movement}`.toLowerCase();
-  return matchesCategory && haystack.includes(term);
+    const term = searchInput.value.trim().toLowerCase();
+    const matchesCategory = activeCategory === 'All' || art.category === activeCategory;
+    const haystack = `${art.title} ${art.artist} ${art.year} ${art.category}`.toLowerCase();
+    return matchesCategory && haystack.includes(term);
 }
 
 function currentFilteredArtworks() {
-  return artworks.filter(matchesFilters);
+    return artworks.filter(matchesFilters);
 }
-function currentFilteredArtists() {
-  return artist.filter(matchesFiltersArtist);
-}
-
 
 function renderFilters() {
-  filterButtons.innerHTML = '';
-  uniqueCategories().forEach((category) => {
-    const button = document.createElement('button');
-    button.className = `filter-button ${category === activeCategory ? 'active' : ''}`;
-    button.textContent = category;
-    button.addEventListener('click', () => {
-      activeCategory = category;
-      renderFilters();
-      renderGallery();
+    filterButtons.innerHTML = '';
+    uniqueCategories().forEach((category) => {
+        const button = document.createElement('button');
+        button.className = `filter-button ${category === activeCategory ? 'active' : ''}`;
+        button.textContent = category;
+        button.addEventListener('click', () => {
+            activeCategory = category;
+            renderFilters();
+            renderGallery();
+            renderArtists();
+        });
+        filterButtons.appendChild(button);
     });
-    filterButtons.appendChild(button);
-  });
 }
 
 function renderGallery() {
-  const filtered = currentFilteredArtworks();
-  galleryGrid.innerHTML = '';
-  resultsText.textContent = `${filtered.length} artwork${filtered.length === 1 ? '' : 's'} shown`;
-  emptyState.classList.toggle('hidden', filtered.length > 0);
+    const filtered = currentFilteredArtworks();
+    galleryGrid.innerHTML = '';
+    resultsText.textContent = `${filtered.length} artwork${filtered.length === 1 ? '' : 's'} shown`;
+    emptyState.classList.toggle('hidden', filtered.length > 0);
 
-  filtered.forEach((art) => {
-    const card = document.createElement('article');
-    card.className = 'art-card';
-    card.innerHTML = `
+    filtered.forEach((art) => {
+        const card = document.createElement('article');
+        card.className = 'art-card';
+        card.innerHTML = `
       <figure>
         <img src="${art.image}" alt="${art.title} by ${art.artist}" loading="lazy" />
         <span class="card-badge">${art.category}</span>
@@ -489,25 +478,39 @@ function renderGallery() {
         </div>
       </figcaption>
     `;
-    galleryGrid.appendChild(card);
-  });
-
-  galleryGrid.querySelectorAll('[data-open-id]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const filteredItems = currentFilteredArtworks();
-      currentIndex = filteredItems.findIndex((art) => art.id === Number(button.dataset.openId));
-      openLightbox(filteredItems);
+        galleryGrid.appendChild(card);
     });
-  });
+
+    galleryGrid.querySelectorAll('[data-open-id]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const filteredItems = currentFilteredArtworks();
+            currentIndex = filteredItems.findIndex((art) => art.id === Number(button.dataset.openId));
+            openLightbox(filteredItems);
+        });
+    });
 }
 
 function renderArtists() {
-    const filtered = currentFilteredArtists();
-  artistProfilesContainer.innerHTML = '';
-  artistProfiles.forEach((filtered) => {
-    const card = document.createElement('article');
-    card.className = 'artist-card';
-    card.innerHTML = `
+    artistProfilesContainer.innerHTML = '';
+
+    const filteredArtworks = currentFilteredArtworks();
+    const visibleArtistNames = new Set(filteredArtworks.map((art) => art.artist));
+
+    const filteredArtists = artistProfiles.filter((artist) =>
+        visibleArtistNames.has(artist.name)
+    );
+
+    if (!filteredArtists.length) {
+        artistProfilesContainer.innerHTML = `
+      <p class="empty-copy">No artist profiles match the current filters.</p>
+    `;
+        return;
+    }
+
+    filteredArtists.forEach((artist) => {
+        const card = document.createElement('article');
+        card.className = 'artist-card';
+        card.innerHTML = `
       <div class="artist-card-content">
         <div class="artist-avatar">${artist.initials}</div>
         <h4>${artist.name}</h4>
@@ -515,99 +518,105 @@ function renderArtists() {
         <p>${artist.bio}</p>
       </div>
     `;
-    artistProfilesContainer.appendChild(card);
-  });
+        artistProfilesContainer.appendChild(card);
+    });
 }
 
 function updateCounters() {
-  artworkCount.textContent = artworks.length;
-  artistCount.textContent = artistProfiles.length;
+    artworkCount.textContent = artworks.length;
+    artistCount.textContent = artistProfiles.length;
 }
 
 function openLightbox(list) {
-  if (!list.length) return;
-  const art = list[currentIndex];
-  lightboxImage.src = art.image;
-  lightboxImage.alt = `${art.title} by ${art.artist}`;
-  lightboxImage.classList.remove('zoomed');
-  zoomToggle.textContent = 'Zoom in';
-  lightboxCategory.textContent = art.category;
-  lightboxTitle.textContent = art.title;
-  lightboxMeta.textContent = `${art.artist} · ${art.year}`;
-  lightboxDescription.textContent = art.description;
-  lightbox.classList.remove('hidden');
-  lightbox.setAttribute('aria-hidden', 'false');
+    if (!list.length) return;
+    const art = list[currentIndex];
+    lightboxImage.src = art.image;
+    lightboxImage.alt = `${art.title} by ${art.artist}`;
+    lightboxImage.classList.remove('zoomed');
+    zoomToggle.textContent = 'Zoom in';
+    lightboxCategory.textContent = art.category;
+    lightboxTitle.textContent = art.title;
+    lightboxMeta.textContent = `${art.artist} · ${art.year}`;
+    lightboxDescription.textContent = art.description;
+    lightbox.classList.remove('hidden');
+    lightbox.setAttribute('aria-hidden', 'false');
 
-  prevButton.onclick = () => {
-    currentIndex = (currentIndex - 1 + list.length) % list.length;
-    openLightbox(list);
-  };
+    prevButton.onclick = () => {
+        currentIndex = (currentIndex - 1 + list.length) % list.length;
+        openLightbox(list);
+    };
 
-  nextButton.onclick = () => {
-    currentIndex = (currentIndex + 1) % list.length;
-    openLightbox(list);
-  };
+    nextButton.onclick = () => {
+        currentIndex = (currentIndex + 1) % list.length;
+        openLightbox(list);
+    };
 }
 
 function closeLightbox() {
-  lightbox.classList.add('hidden');
-  lightbox.setAttribute('aria-hidden', 'true');
-  stopSlideshow();
+    lightbox.classList.add('hidden');
+    lightbox.setAttribute('aria-hidden', 'true');
+    stopSlideshow();
 }
 
 function stopSlideshow() {
-  if (slideshowInterval) {
-    clearInterval(slideshowInterval);
-    slideshowInterval = null;
-  }
-  playToggle.textContent = 'Start slideshow';
+    if (slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+    }
+    playToggle.textContent = 'Start slideshow';
 }
 
 function toggleSlideshow() {
-  const list = currentFilteredArtworks();
-  if (!list.length) return;
+    const list = currentFilteredArtworks();
+    if (!list.length) return;
 
-  if (slideshowInterval) {
-    stopSlideshow();
-    return;
-  }
+    if (slideshowInterval) {
+        stopSlideshow();
+        return;
+    }
 
-  playToggle.textContent = 'Stop slideshow';
-  slideshowInterval = setInterval(() => {
-    currentIndex = (currentIndex + 1) % list.length;
-    openLightbox(list);
     playToggle.textContent = 'Stop slideshow';
-  }, 2500);
+    slideshowInterval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % list.length;
+        openLightbox(list);
+        playToggle.textContent = 'Stop slideshow';
+    }, 2500);
 }
 
-searchInput.addEventListener('input', renderGallery);
+searchInput.addEventListener('input', () => {
+    renderGallery();
+    renderArtists();
+});
+
 lightboxClose.addEventListener('click', closeLightbox);
 playToggle.addEventListener('click', toggleSlideshow);
+
 zoomToggle.addEventListener('click', () => {
-  lightboxImage.classList.toggle('zoomed');
-  zoomToggle.textContent = lightboxImage.classList.contains('zoomed') ? 'Zoom out' : 'Zoom in';
+    lightboxImage.classList.toggle('zoomed');
+    zoomToggle.textContent = lightboxImage.classList.contains('zoomed') ? 'Zoom out' : 'Zoom in';
 });
+
 lightboxImage.addEventListener('click', () => {
-  lightboxImage.classList.toggle('zoomed');
-  zoomToggle.textContent = lightboxImage.classList.contains('zoomed') ? 'Zoom out' : 'Zoom in';
+    lightboxImage.classList.toggle('zoomed');
+    zoomToggle.textContent = lightboxImage.classList.contains('zoomed') ? 'Zoom out' : 'Zoom in';
 });
 
 document.addEventListener('keydown', (event) => {
-  if (lightbox.classList.contains('hidden')) return;
-  const list = currentFilteredArtworks();
-  if (event.key === 'Escape') closeLightbox();
-  if (event.key === 'ArrowRight') {
-    currentIndex = (currentIndex + 1) % list.length;
-    openLightbox(list);
-  }
-  if (event.key === 'ArrowLeft') {
-    currentIndex = (currentIndex - 1 + list.length) % list.length;
-    openLightbox(list);
-  }
+    if (lightbox.classList.contains('hidden')) return;
+    const list = currentFilteredArtworks();
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowRight') {
+        currentIndex = (currentIndex + 1) % list.length;
+        openLightbox(list);
+    }
+    if (event.key === 'ArrowLeft') {
+        currentIndex = (currentIndex - 1 + list.length) % list.length;
+        openLightbox(list);
+    }
 });
 
 themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('light');
+    document.body.classList.toggle('light');
 });
 
 renderFilters();
