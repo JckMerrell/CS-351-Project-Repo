@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Art Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="topbar">
+      <div class="brand">
+        <span class="brand-mark">🎨</span>
+        <div>
+          <h1>Interactive Art Gallery</h1>
+          <p>Explore public domain masterpieces online</p>
+        </div>
+      </div>
+      <button id="themeToggle" class="ghost-button" aria-label="Toggle theme">Toggle theme</button>
+    </nav>
+
+    <div class="hero-content">
+      <div>
+        <p class="eyebrow">CS 351 Project</p>
+        <h2>Browse, search, filter, and view artworks in an interactive lightbox.</h2>
+        <p class="hero-text">
+          This gallery includes an artwork grid, category filtering, click-to-zoom, slideshow controls,
+          artist profiles, and client-side search powered by HTML, CSS, and JavaScript.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <article>
+          <strong id="artworkCount">0</strong>
+          <span>Artworks</span>
+        </article>
+        <article>
+          <strong id="artistCount">0</strong>
+          <span>Artists</span>
+        </article>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="controls-panel">
+      <div class="search-wrap">
+        <label for="searchInput">Search artworks</label>
+        <input id="searchInput" type="search" placeholder="Search by title, artist, year, or category..." />
+      </div>
+
+      <div class="filter-wrap">
+        <span>Filter by category</span>
+        <div id="filterButtons" class="filter-buttons"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Gallery Collection</p>
+          <h3>Featured artworks</h3>
+        </div>
+        <p id="resultsText" class="results-text"></p>
+      </div>
+      <div id="galleryGrid" class="gallery-grid"></div>
+      <p id="emptyState" class="empty-state hidden">No artworks match your search. Try a different keyword or category.</p>
+    </section>
+
+    <section class="artist-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Artist Profiles</p>
+          <h3>Meet the artists</h3>
+        </div>
+      </div>
+      <div id="artistProfiles" class="artist-grid"></div>
+    </section>
+  </main>
+
+  <div id="lightbox" class="lightbox hidden" aria-hidden="true" role="dialog" aria-label="Artwork slideshow viewer">
+    <button id="lightboxClose" class="lightbox-close" aria-label="Close viewer">×</button>
+    <button id="prevButton" class="lightbox-nav prev" aria-label="Previous artwork">❮</button>
+
+    <div class="lightbox-content">
+      <div class="lightbox-image-wrap">
+        <img id="lightboxImage" src="" alt="" />
+      </div>
+      <div class="lightbox-info">
+        <p id="lightboxCategory" class="eyebrow"></p>
+        <h4 id="lightboxTitle"></h4>
+        <p id="lightboxMeta" class="lightbox-meta"></p>
+        <p id="lightboxDescription"></p>
+        <div class="lightbox-actions">
+          <button id="zoomToggle" class="primary-button">Zoom in</button>
+          <button id="playToggle" class="ghost-button">Start slideshow</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="nextButton" class="lightbox-nav next" aria-label="Next artwork">❯</button>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
