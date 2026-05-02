@@ -41,7 +41,7 @@ const artworks = [
         artist: "Michelangelo",
         year: 1512,
         category: "Renaissance",
-        image: "assets/images/Creation_Of_Adam.jpg",
+        image: "assets/images/Creation_of_Adam.jpg",
         description: "Part of the Sistine Chapel ceiling."
     },
     {
@@ -50,7 +50,7 @@ const artworks = [
         artist: "Raphael",
         year: 1511,
         category: "Renaissance",
-        image: "assets/images/School_Of_Athens.jpg",
+        image: "assets/images/School_of_Athens.jpg",
         description: "Philosophers gathered in a grand architectural setting."
     },
     {
@@ -149,7 +149,7 @@ const artworks = [
         artist: "Claude Monet",
         year: 1916,
         category: "Impressionism",
-        image: "assets/images/Water_Lilies.jpg",
+        image: "assets/images/Water_lilies.jpg",
         description: "A tranquil study of light and water."
     },
     {
